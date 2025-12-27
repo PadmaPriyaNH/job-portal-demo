@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Thank You - Interview Session Ended</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-image: url('{{ url_for("static", filename="images/thankyou_bg.jpg") }}');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            margin: 0;
+            padding: 50px;
+        }
+        .thankyou-container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+        h1 { color: #2c3e50; }
+        p { color: #555; font-size: 18px; }
+        .btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 24px;
+            background: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+        }
+        .btn:hover { background: #2980b9; }
+    </style>
+</head>
+<body>
+    <div class="thankyou-container">
+        <h1>Thank You!</h1>
+        <p>Your interview session has ended. Keep practicing to grow your skills!</p>
+        <a href="/dashboard" class="btn">View Your Progress</a>
+    </div>
+</body>
+</html>

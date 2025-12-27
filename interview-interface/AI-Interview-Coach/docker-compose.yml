@@ -1,0 +1,13 @@
+version: '3.8'
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+      - SECRET_KEY=${SECRET_KEY:-dev_key}
+      - LOG_LEVEL=INFO
+      - MODEL_NAME=all-MiniLM-L6-v2
+    volumes:
+      - ./:/app

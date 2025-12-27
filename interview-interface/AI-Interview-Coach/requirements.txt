@@ -1,0 +1,6 @@
+Flask==3.0.3
+requests==2.32.3
+sentence-transformers==3.0.1
+tokenizers>=0.21,<0.24
+torch<2.8,>=2.5
+transformers>=4.47,<5.0

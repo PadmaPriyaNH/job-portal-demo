@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Progress - AI Interview Coach</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(to right, #e0f7fa, #b2ebf2);
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+        h2 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .skill-bar {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .skill-bar span:first-child {
+            width: 200px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .bar {
+            flex: 1;
+            height: 20px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            margin: 0 15px;
+            overflow: hidden;
+        }
+        .fill {
+            height: 100%;
+            background: linear-gradient(to right, #3498db, #2ecc71);
+            border-radius: 10px;
+        }
+        .skill-bar span:last-child {
+            width: 60px;
+            text-align: right;
+            color: #2c3e50;
+        }
+        .recommendation {
+            margin-top: 40px;
+            padding: 20px;
+            background: #e8f4fc;
+            border-radius: 10px;
+        }
+        .recommendation h3 {
+            color: #e74c3c;
+            margin-top: 0;
+        }
+        .recommendation ul {
+            padding-left: 20px;
+        }
+        .recommendation li {
+            margin: 8px 0;
+            color: #2c3e50;
+        }
+        .nav-button {
+            display: block;
+            width: 200px;
+            margin: 20px auto;
+            padding: 12px;
+            background: #3498db;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+        .nav-button:hover {
+            background: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Your Skill Map</h2>
+        <div class="skills">
+            {% if user_skills %}
+                {% for concept, score in user_skills.items() %}
+                                        <div class="skill-bar">
+                        <span>{{ concept | replace('_', ' ') | title }}</span>
+                        <div class="bar">
+                            <div class="fill" data-width="{{ (score * 10) | int }}"></div>
+                        </div>
+                        <span>{{ score | round(1) }}/10</span>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p style="text-align: center; color: #7f8c8d;">No practice data yet. Complete an interview session to see your progress!</p>
+            {% endif %}
+        </div>
+
+        {% if weakest_concept %}
+        <div class="recommendation">
+            <h3>Recommended Focus: {{ weakest_concept | replace('_', ' ') | title }}</h3>
+            <p>Practice these questions to improve:</p>
+            <ul>
+                {% for q in recommended_questions %}
+                    <li>{{ q }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <a href="/interview" class="nav-button">Continue Practicing</a>
+        <a href="/" class="nav-button" style="background: #95a5a6;">Back to Home</a>
+    </div>
+    <script>
+        (function() {
+            var fills = document.querySelectorAll('.fill[data-width]');
+            fills.forEach(function(el) {
+                var w = parseInt(el.getAttribute('data-width'), 10);
+                if (isNaN(w) || w < 0) w = 0;
+                if (w > 100) w = 100;
+                el.style.width = w + '%';
+            });
+        })();
+    </script>
+</body>
+</html>

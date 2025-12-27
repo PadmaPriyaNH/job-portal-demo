@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+.env
+.venv/
+venv/
+
+# Byte-compiled / optimized / DLL files
+*.pyc
+
+# VSCode
+.vscode/
+
+# Logs
+*.log
+logs/
+
+# Model caches
+.cache/
+.huggingface/
+
+dist/
+build/
+.eggs/
+
+# Pytest
+.pytest_cache/
+.coverage
+htmlcov/
+
+# OS files
+.DS_Store
+Thumbs.db

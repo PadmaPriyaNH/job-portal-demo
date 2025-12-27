@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Interview Coach</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(to right, #e0f7fa, #b2ebf2);
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+        h1 { text-align: center; color: #2c3e50; }
+        label, select, textarea, button {
+            display: block;
+            margin-top: 15px;
+            width: 100%;
+            font-size: 16px;
+        }
+        select, textarea {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+        button {
+            padding: 10px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover { background-color: #2980b9; }
+        #useVoiceBtn {
+            background-color: #2ecc71;
+            font-size: 14px;
+            padding: 8px 12px;
+            width: auto;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        #stopInterviewBtn { background-color: #e74c3c; }
+        #progressBtn { background-color: #9b59b6; }
+        #feedback, #score {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            display: none;
+        }
+        .question-box {
+            background-color: #f0f8ff;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        .center { text-align: center; }
+        #score span:first-child { color: #2980b9; }
+        #feedback span:first-child { color: #27ae60; }
+        #scoreValue, #feedbackValue {
+            color: black;
+            font-weight: normal;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AI Interview Coach</h1>
+
+        <label for="category">Select Category:</label>
+        <select id="category">
+            {% for cat in categories %}
+                <option value="{{ cat }}">{{ cat.title() }}</option>
+            {% endfor %}
+        </select>
+
+        <button onclick="getQuestion()">Get Question</button>
+
+        <div class="center">
+            <button id="useVoiceBtn" onclick="startVoiceRecognition()">Use Voice</button>
+        </div>
+
+        <div class="question-box" id="question">Your question will appear here...</div>
+
+        <textarea id="answer" rows="6" placeholder="Type your answer here or use voice input..."></textarea>
+        <button onclick="submitAnswer()">Submit Answer</button>
+
+        <button id="stopInterviewBtn" onclick="stopInterview()">Stop Interview</button>
+        <button id="progressBtn" onclick="location.href='/dashboard'">View My Progress</button>
+
+        <div id="score"><span>Score:</span> <span id="scoreValue"></span></div>
+        <div id="feedback"><span>Feedback:</span> <span id="feedbackValue"></span></div>
+        <div id="insights" style="display:none; margin-top:10px; font-size:14px;">
+            <div id="coverage"></div>
+            <div id="matched"></div>
+            <div id="missing"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestion = "";
+        let interviewActive = true;
+
+        async function getQuestion() {
+            if (!interviewActive) return;
+            const category = document.getElementById("category").value;
+            const res = await fetch("/get-question", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({category})
+            });
+            const data = await res.json();
+            if (data.message) {
+                document.getElementById("question").innerText = data.message;
+                currentQuestion = "";
+            } else {
+                currentQuestion = data.question;
+                document.getElementById("question").innerText = currentQuestion;
+                document.getElementById("answer").value = "";
+                document.getElementById("score").style.display = "none";
+                document.getElementById("feedback").style.display = "none";
+            }
+        }
+
+        async function submitAnswer() {
+            if (!interviewActive || !currentQuestion) {
+                alert("Get a question first!");
+                return;
+            }
+            const answer = document.getElementById("answer").value.trim();
+            if (!answer) {
+                alert("Please enter your answer.");
+                return;
+            }
+            const res = await fetch("/submit-answer", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({question: currentQuestion, answer: answer})
+            });
+            const data = await res.json();
+            if (data.error) {
+                document.getElementById("feedbackValue").innerText = "Error: " + data.error;
+                document.getElementById("feedback").style.display = "block";
+                document.getElementById("score").style.display = "none";
+            } else {
+                document.getElementById("scoreValue").innerText = data.score + " / 10";
+                document.getElementById("feedbackValue").innerText = data.feedback;
+                document.getElementById("score").style.display = "block";
+                document.getElementById("feedback").style.display = "block";
+                const insights = document.getElementById("insights");
+                if (data.concept_coverage !== undefined) {
+                    insights.style.display = "block";
+                    document.getElementById("coverage").innerText = `Concept coverage: ${Math.round((data.concept_coverage || 0)*100)}%`;
+                    document.getElementById("matched").innerText = `Matched concepts: ${(data.matched_concepts || []).join(', ')}`;
+                    document.getElementById("missing").innerText = `Missing concepts: ${(data.missing_concepts || []).join(', ')}`;
+                } else {
+                    insights.style.display = "none";
+                }
+            }
+        }
+
+        function startVoiceRecognition() {
+            if (!('webkitSpeechRecognition' in window)) {
+                alert("Voice not supported in this browser.");
+                return;
+            }
+            const rec = new webkitSpeechRecognition();
+            rec.lang = "en-US";
+            rec.onresult = (e) => {
+                document.getElementById("answer").value = e.results[0][0].transcript;
+            };
+            rec.onerror = (e) => alert("Voice error: " + e.error);
+            rec.start();
+        }
+
+        function stopInterview() {
+            interviewActive = false;
+            document.getElementById("question").innerText = "Thank you! Redirecting...";
+            document.getElementById("answer").disabled = true;
+            setTimeout(() => window.location.href = "/thankyou", 1500);
+        }
+    </script>
+</body>
+</html>

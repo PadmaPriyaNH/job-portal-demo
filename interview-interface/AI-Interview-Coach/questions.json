@@ -1,0 +1,188 @@
+{
+  "technical": [
+    {
+      "question": "Explain how a hash table works and why it's efficient.",
+      "ideal_answer": "A hash table stores key-value pairs using a hash function to compute an index into an array of buckets. The hash function converts the key into a fixed-size integer (hash code), which maps to a bucket. Collisions (two keys hashing to same index) are handled via chaining (linked lists) or open addressing. Average lookup/insert/delete is O(1), making it extremely efficient for search-heavy tasks."
+    },
+    {
+      "question": "What is time complexity, and why does it matter?",
+      "ideal_answer": "Time complexity measures how an algorithm's runtime grows relative to input size (e.g., O(1), O(log n), O(n), O(n²)). It matters because it helps predict performance at scale. An O(n²) algorithm may work for 100 items but fail for 1 million. Choosing efficient algorithms saves time, money, and energy in real systems."
+    },
+    {
+      "question": "Describe the difference between TCP and UDP.",
+      "ideal_answer": "TCP (Transmission Control Protocol) is connection-oriented, reliable, and ordered. It guarantees delivery via acknowledgments and retransmissions, but has overhead. UDP (User Datagram Protocol) is connectionless, faster, and unreliable—packets may be lost or arrive out of order. TCP is used for web browsing/email; UDP for video streaming/online gaming where speed > reliability."
+    },
+    {
+      "question": "What is recursion, and when should you avoid it?",
+      "ideal_answer": "Recursion is when a function calls itself to solve smaller instances of the same problem. It needs a base case to stop. Avoid it when: (1) input size is large (risk of stack overflow), (2) iterative solution is simpler, or (3) performance is critical (function call overhead). Tail recursion optimization helps in some languages."
+    },
+    {
+      "question": "Explain the difference between == and === in JavaScript.",
+      "ideal_answer": "In JavaScript, == compares values with type coercion (e.g., '5' == 5 → true), while === compares both value and type without coercion ('5' === 5 → false). Using === avoids unexpected bugs from implicit type conversion, so it's generally preferred."
+    },
+    {
+      "question": "What is a closure in programming? Give a real-world use case.",
+      "ideal_answer": "A closure is a function that retains access to variables from its outer (enclosing) scope even after that scope has finished executing. Real-world use: creating private variables in JavaScript (e.g., a counter that can't be reset from outside), or event handlers that remember context."
+    },
+    {
+      "question": "How does garbage collection work in Python?",
+      "ideal_answer": "Python uses reference counting as its primary garbage collection method: each object tracks how many references point to it. When references drop to zero, memory is freed immediately. It also has a cyclic garbage collector to handle reference cycles (e.g., two objects referencing each other) that reference counting can't clean up."
+    },
+    {
+      "question": "What is the purpose of an API gateway?",
+      "ideal_answer": "An API gateway is a server that acts as a single entry point for clients to access multiple microservices. It handles request routing, authentication, rate limiting, logging, and protocol translation. This simplifies client code and centralizes cross-cutting concerns."
+    },
+    {
+      "question": "Explain the CAP theorem in distributed systems.",
+      "ideal_answer": "The CAP theorem states that a distributed system can only guarantee two of three properties: Consistency (all nodes see same data), Availability (every request gets a response), and Partition Tolerance (system works despite network failures). Since partitions are unavoidable, systems choose between CP (e.g., databases like MongoDB) or AP (e.g., Cassandra)."
+    },
+    {
+      "question": "What is the difference between authentication and authorization?",
+      "ideal_answer": "Authentication verifies identity (e.g., login with username/password). Authorization determines what an authenticated user can do (e.g., admin can delete posts, regular user cannot). Example: Logging into Gmail is authentication; accessing your emails vs. someone else's is authorization."
+    },
+    {
+      "question": "Why is it important to avoid mutable global state?",
+      "ideal_answer": "Mutable global state makes code unpredictable, hard to test, and prone to bugs (e.g., race conditions in multithreading). Functions that rely on global variables aren't pure—they produce different outputs for same inputs. Instead, pass data explicitly or use dependency injection for better modularity."
+    },
+    {
+      "question": "What is lazy loading, and where is it useful?",
+      "ideal_answer": "Lazy loading delays initialization of an object until it's needed. It improves startup performance and saves memory. Common uses: loading images only when scrolled into view, initializing heavy modules on first use, or database relationships in ORMs (e.g., SQLAlchemy)."
+    },
+    {
+      "question": "Explain how HTTPS secures data.",
+      "ideal_answer": "HTTPS uses TLS/SSL to encrypt HTTP traffic. When a client connects to a server: (1) they perform a handshake to agree on encryption keys, (2) the server proves identity via a digital certificate, (3) all data is encrypted with symmetric keys. This prevents eavesdropping, tampering, and man-in-the-middle attacks."
+    },
+    {
+      "question": "What is the difference between a process and a thread?",
+      "ideal_answer": "A process is an independent program instance with its own memory space. A thread is a lightweight unit of execution within a process, sharing the process's memory. Threads are faster to create and communicate but require synchronization to avoid race conditions. Processes are isolated (more secure) but heavier."
+    },
+    {
+      "question": "How would you debug a slow SQL query?",
+      "ideal_answer": "Steps: (1) Use EXPLAIN to see the query execution plan, (2) check if indexes are used on WHERE/JOIN columns, (3) avoid SELECT *, (4) look for full table scans, (5) consider query structure (subqueries vs. joins), (6) check for locks or high server load. Tools: database profiler, slow query log."
+    }
+  ],
+  "behavioral": [
+    {
+      "question": "Tell me about a time you had to learn a new technology quickly to solve a problem.",
+      "ideal_answer": "When our team needed to integrate a payment API I'd never used, I spent 2 hours reading docs, built a minimal test script, and verified edge cases (refunds, errors). I documented my findings for the team. Key: focus on the immediate need, build a prototype, and validate early."
+    },
+    {
+      "question": "Describe a project where you received critical feedback. How did you respond?",
+      "ideal_answer": "My PR was rejected for poor error handling. Instead of getting defensive, I asked for specific examples, studied best practices, and rewrote the code with proper logging and user-friendly messages. The reviewer appreciated the improvement, and I now always consider failure modes upfront."
+    },
+    {
+      "question": "Give an example of when you had to explain a technical concept to a non-technical person.",
+      "ideal_answer": "I explained APIs to a marketing teammate using a restaurant analogy: 'The menu is the API documentation, you (client) order (request), kitchen (server) prepares food (response).' They understood instantly. Always use relatable analogies and avoid jargon."
+    },
+    {
+      "question": "Tell me about a time you made a mistake in production. What did you learn?",
+      "ideal_answer": "I pushed a config change without testing, causing downtime. I rolled back immediately, then implemented: (1) mandatory staging tests, (2) peer review for config changes, (3) automated rollback scripts. Mistakes are learning opportunities if you build safeguards."
+    },
+    {
+      "question": "How do you approach a problem you've never seen before?",
+      "ideal_answer": "I break it down: (1) understand requirements, (2) research similar problems, (3) prototype small solutions, (4) validate assumptions early. I also ask for help if stuck for >30 mins—collaboration beats ego."
+    },
+    {
+      "question": "Describe a time you improved an existing process or system.",
+      "ideal_answer": "Our manual deployment took 2 hours. I automated it with a CI/CD pipeline (GitHub Actions), reducing it to 10 minutes and eliminating human errors. I measured time saved and shared results to get team buy-in."
+    },
+    {
+      "question": "Tell me about a time you had to work with incomplete information.",
+      "ideal_answer": "A client gave vague requirements for a feature. I asked clarifying questions, built a clickable mockup, and iterated based on their feedback. Delivering a prototype early uncovered hidden needs and saved rework later."
+    },
+    {
+      "question": "How do you stay updated with new technologies?",
+      "ideal_answer": "I dedicate 5 hours/week: (1) newsletters (TLDR, Hacker News), (2) build small projects with new tools, (3) attend local meetups. I focus on depth in my stack but explore adjacent areas (e.g., learning Rust as a Python dev)."
+    },
+    {
+      "question": "Describe a time you had to say 'no' to a request. How did you handle it?",
+      "ideal_answer": "A stakeholder asked for a 'quick feature' mid-sprint. I explained our sprint capacity, showed the impact on other work, and offered to prioritize it in the next sprint. They appreciated the transparency, and we maintained trust."
+    },
+    {
+      "question": "Tell me about a time you mentored or helped a teammate grow.",
+      "ideal_answer": "A junior dev struggled with debugging. I paired with them weekly, taught systematic approaches (read logs, isolate variables), and encouraged rubber ducking. Within a month, they were solving issues independently. Teaching reinforces your own knowledge."
+    },
+    {
+      "question": "How do you handle disagreements about technical decisions?",
+      "ideal_answer": "I focus on data, not opinions. In a debate over database choice, I benchmarked both options with our workload and presented results. We chose the faster one. If data isn't available, I suggest a time-boxed experiment."
+    },
+    {
+      "question": "Describe a time you had to deliver bad news to a team or client.",
+      "ideal_answer": "We discovered a critical bug 2 days before launch. I informed the client immediately with: (1) what happened, (2) impact, (3) our fix plan, (4) revised timeline. Honesty built trust, and they appreciated our transparency."
+    },
+    {
+      "question": "What’s your approach to writing clean, maintainable code?",
+      "ideal_answer": "I follow: (1) meaningful names, (2) small functions (<20 lines), (3) comments for 'why' not 'what', (4) consistent style (linters), (5) unit tests for critical paths. Code is read more than written—optimize for readability."
+    },
+    {
+      "question": "Tell me about a time you failed to meet a deadline. What happened?",
+      "ideal_answer": "I underestimated a task's complexity and missed a deadline. I communicated early, broke the task into smaller pieces, and delivered a minimal version first. Now I always add buffer time and update estimates as I learn more."
+    },
+    {
+      "question": "How do you balance speed and quality in your work?",
+      "ideal_answer": "I ship MVPs fast but never skip fundamentals: error handling, basic tests, and documentation. For non-critical features, I iterate quickly; for core systems, I invest in robustness. Speed without quality creates tech debt that slows you down later."
+    }
+  ],
+  "general": [
+    {
+      "question": "What does 'being a good engineer' mean to you?",
+      "ideal_answer": "It's not just coding skill—it's communication, empathy, curiosity, and ownership. A good engineer writes maintainable code, listens to users, learns from mistakes, and lifts others up. They solve the right problem, not just the technical one."
+    },
+    {
+      "question": "How do you decide what to work on when you have multiple priorities?",
+      "ideal_answer": "I align with team goals: what delivers the most value or unblocks others? I use Eisenhower Matrix (urgent/important) and talk to my manager if priorities conflict. Saying 'no' or 'not now' is part of focus."
+    },
+    {
+      "question": "What’s a skill you’re currently working to improve?",
+      "ideal_answer": "I'm improving my system design skills. I study architectures of popular apps (e.g., how Instagram handles uploads), practice on Excalidraw, and review designs with seniors. I track progress by how confidently I can discuss trade-offs."
+    },
+    {
+      "question": "How do you know when you’ve done a good job?",
+      "ideal_answer": "When: (1) the solution works reliably, (2) others can understand/maintain it, (3) it solves the user's real need, and (4) I learned something. Metrics (e.g., reduced latency) and peer feedback help validate."
+    },
+    {
+      "question": "What’s your biggest professional accomplishment so far?",
+      "ideal_answer": "Leading a migration from monolith to microservices that reduced API latency by 60%. It taught me about distributed systems, stakeholder management, and incremental delivery. The key was starting small and proving value early."
+    },
+    {
+      "question": "How do you handle situations where you don’t know the answer?",
+      "ideal_answer": "I say 'I don't know, but I'll find out.' Then I: (1) research docs/Stack Overflow, (2) experiment in a sandbox, (3) ask colleagues if stuck. Pretending to know wastes more time and erodes trust."
+    },
+    {
+      "question": "What kind of work environment helps you do your best work?",
+      "ideal_answer": "Psychological safety (I can ask 'dumb' questions), clear goals, autonomy in how I solve problems, and regular feedback. I thrive with async communication (docs, PR comments) but value sync time for complex discussions."
+    },
+    {
+      "question": "What’s a common misconception about your role?",
+      "ideal_answer": "That coding is 90% of the job. In reality, it's 30% coding, 70% reading code, debugging, designing, discussing, and documenting. Great engineers are great communicators and listeners."
+    },
+    {
+      "question": "How do you measure your own growth as an engineer?",
+      "ideal_answer": "By: (1) complexity of problems I can solve independently, (2) quality of my designs, (3) how often I unblock others, and (4) feedback from peers. I keep a 'brag document' to track wins and areas to improve."
+    },
+    {
+      "question": "What’s something you’ve changed your mind about in your career?",
+      "ideal_answer": "I used to think 'clever' code was impressive. Now I value simplicity and readability. A junior dev once spent hours debugging my 'elegant' one-liner—I rewrote it as 3 clear lines. Code is a team sport."
+    },
+    {
+      "question": "How do you approach giving feedback to others?",
+      "ideal_answer": "I use SBI: Situation-Behavior-Impact. Example: 'In yesterday's meeting (situation), when you interrupted Sarah (behavior), she stopped sharing ideas (impact).' I focus on actions, not personality, and always offer solutions."
+    },
+    {
+      "question": "What’s a non-technical skill that’s helped you succeed?",
+      "ideal_answer": "Active listening. By truly hearing users/stakeholders, I uncover real needs behind vague requests. It’s saved me from building the wrong thing multiple times. Also, writing—clear docs prevent so many meetings."
+    },
+    {
+      "question": "How do you stay motivated when working on mundane tasks?",
+      "ideal_answer": "I connect them to a bigger purpose: 'Writing tests protects users from bugs.' I automate repetitive parts, pair with a teammate to make it social, or time-box it as a 'coding meditation.'"
+    },
+    {
+      "question": "What’s your philosophy on work-life balance?",
+      "ideal_answer": "Sustainable pace > heroics. I protect focus time, take real breaks, and disconnect after hours. Burnout helps no one. My best ideas come when I'm rested—not at 2 AM debugging."
+    },
+    {
+      "question": "If you could give your past self one career tip, what would it be?",
+      "ideal_answer": "'Ask for help sooner.' I wasted weeks stuck on problems a 10-minute chat could've solved. Senior engineers expect questions—it shows engagement, not weakness. Also, document everything; future you will thank present you.'"
+    }
+  ]
+}
