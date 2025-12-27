@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Post Job{% endblock %}
+{% block content %}
+<h2>Post a New Job</h2>
+<form method="post">
+    <p>
+        <input type="text" name="title" placeholder="Job Title" required>
+    </p>
+    <p>
+        <textarea name="description" placeholder="Job Description" rows="5"></textarea>
+    </p>
+    <button type="submit">Post Job</button>
+</form>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Recruiter Dashboard{% endblock %}
+{% block content %}
+<h2>My Jobs</h2>
+{% for job in jobs %}
+<div class="card">
+    <h3>{{ job.title }}</h3>
+    <p>{{ job.description }}</p>
+    <a href="{{ url_for('applicants', job_id=job.id) }}">View Applicants</a>
+</div>
+{% endfor %}
+<a href="{{ url_for('post_job') }}">Post New Job</a>
+{% endblock %}

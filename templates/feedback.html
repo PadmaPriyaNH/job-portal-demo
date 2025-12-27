@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Feedback for {{ job.title }}{% endblock %}
+{% block content %}
+<h2>Reviewer Feedback for "{{ job.title }}"</h2>
+<table>
+    <tr>
+        <th>Candidate</th>
+        <th>Status</th>
+        <th>Reviews</th>
+    </tr>
+    {% for row in data %}
+    <tr>
+        <td>{{ row.candidate }}</td>
+        <td class="status">{{ row.status }}</td>
+        <td>
+            {% if row.reviews %}
+                <ul>
+                {% for r in row.reviews %}
+                    <li>[{{ r.reviewer_type|upper }}] Score: {{ r.score }} - {{ r.comment }}</li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                No reviews yet.
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+<a href="{{ url_for('applicants', job_id=job.id) }}">Back to Applicants</a>
+{% endblock %}

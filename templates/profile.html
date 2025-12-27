@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Profile{% endblock %}
+{% block content %}
+<h2>Update Profile</h2>
+<form method="post" enctype="multipart/form-data">
+    <p>
+        <label>Resume (PDF):</label>
+        <input type="file" name="resume" accept=".pdf">
+        {% if profile and profile.resume_path %}<small>Existing resume kept if not uploading new.</small>{% endif %}
+    </p>
+    <p>
+        <label>GitHub URL:</label>
+        <input type="url" name="github_url" value="{{ profile.github_url if profile else '' }}">
+    </p>
+    <p>
+        <label>LinkedIn URL:</label>
+        <input type="url" name="linkedin_url" value="{{ profile.linkedin_url if profile else '' }}">
+    </p>
+    <p>
+        <label>Manual Skills (comma-separated):</label>
+        <input type="text" name="manual_skills" placeholder="e.g., Python, Flask, SQL">
+    </p>
+    <button type="submit">Save Profile</button>
+</form>
+{% if profile %}
+<div class="card">
+    <h3>Skill Report</h3>
+    <p><strong>Skills:</strong> {{ profile.extracted_skills }}</p>
+    <p><strong>Technical Score:</strong> {{ profile.tech_score }}</p>
+    <p><strong>Commumication Score:</strong> {{ profile.comm_score }}</p>
+    {% if profile.github_url %}
+        <p><strong>GitHub:</strong> <a href="{{ profile.github_url }}" target="_blank">{{ profile.github_url }}</a></p>
+    {% endif %}
+    {% if profile.linkedin_url %}
+        <p><strong>LinkedIn:</strong> <a href="{{ profile.linkedin_url }}" target="_blank">{{ profile.linkedin_url }}</a></p>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

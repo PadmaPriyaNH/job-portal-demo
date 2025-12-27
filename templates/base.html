@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>{% block head_title %}AI Job Portal Demo{% endblock %}</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: #f8fafc;
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+header { text-align: center; margin: 25px 0; }
+h1 { color: #1e40af; margin-bottom: 8px; }
+.subtitle { color: #475569; }
+.card {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  margin-bottom: 25px;
+  transition: box-shadow .2s ease, transform .08s ease;
+}
+.card:hover { box-shadow: 0 6px 16px rgba(0,0,0,0.08); transform: translateY(-1px); }
+.form-group { margin-bottom: 18px; }
+/* Support legacy forms using <p> wrappers */
+form p { margin-bottom: 18px; }
+label { display: block; margin-bottom: 6px; font-weight: 600; color: #1e293b; }
+input[type="file"], input[type="url"], input[type="text"], input[type="email"], input[type="password"], input[type="number"], select, textarea {
+  width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; background:#fff; color:#0f172a
+}
+input:focus, textarea:focus, select:focus { outline: 2px solid #93c5fd; box-shadow: 0 0 0 2px #bfdbfe55; }
+button, .btn { background: #3b82f6; color: white; border: none; padding: 12px; border-radius: 8px; width: auto; font-weight: 600; cursor: pointer; text-decoration:none; display:inline-flex; align-items:center; gap:8px; transition: transform .05s ease, box-shadow .2s ease, background-color .2s ease }
+button:hover, .btn:hover { background: #2563eb; box-shadow: 0 6px 14px rgba(37,99,235,.25) }
+button:active, .btn:active { transform: translateY(1px) }
+button:disabled { background: #94a3b8; cursor: not-allowed; box-shadow:none }
+.btn.secondary { background: #f8fafc; color: #1e293b; border: 1px solid #cbd5e1; }
+.btn.success { background: #16a34a; }
+
+/* Tables */
+table { width: 100%; border-collapse: separate; border-spacing: 0; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom:25px }
+th, td { padding: 12px 14px; border-bottom: 1px solid #e2e8f0; text-align:left; vertical-align: top }
+th { background: #f1f5f9; color: #334155 }
+tr:last-child td { border-bottom: none }
+.status { font-weight: bold }
+.status[data-s="Selected"] { color: #16a34a }
+.status[data-s="HR Checked"] { color: #d97706 }
+.status[data-s="Technical Checked"] { color: #2563eb }
+.status[data-s="Shortlisted"] { color: #eab308 }
+
+/* Alerts via flash */
+.alert { padding: 12px 14px; border-radius: 10px; border: 1px solid #cbd5e1; background: #f8fafc; margin: 12px 0; color:#0f172a }
+.alert.success{ border-color:#86efac; background:#ecfdf5; color:#065f46 }
+.alert.error{ border-color:#fecaca; background:#fef2f2; color:#7f1d1d }
+
+/* Utility */
+.sr-only{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0}
+nav.links { display:flex; gap:10px; justify-content:center; flex-wrap:wrap }
+nav.links a { color:#1e293b }
+footer { text-align: center; margin-top: 30px; color: #64748b; font-size: 0.9em; }
+
+/* Result card styles for analysis-like sections */
+.result-card { background: #f0f9ff; border-left: 4px solid #0ea5e9; padding: 20px; border-radius: 0 8px 8px 0; }
+.score { background: #dbeafe; color: #1d4ed8; padding: 3px 10px; border-radius: 20px; font-weight: bold; }
+
+/* Link-like buttons enhancements */
+main a:not(.btn):not(nav a) { color:#1e40af; text-decoration: none }
+main a:not(.btn):hover { text-decoration: underline }
+</style>
+</head>
+<body>
+<header>
+  <h1>🚀 Smart Job Portal Demo</h1>
+  <p class="subtitle">AI-Powered Resume Analysis</p>
+</header>
+<nav class="card links" aria-label="Main navigation">
+  <a href="{{ url_for('dashboard') }}">Dashboard</a>
+  {% if session.role == 'recruiter' %}
+    <a href="{{ url_for('post_job') }}">Post Job</a>
+  {% endif %}
+  <a href="{{ url_for('leaderboard') }}">Leaderboard</a>
+  <a href="{{ url_for('logout') }}">Logout ({{ session.get('email') or session.get('role') }})</a>
+</nav>
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="card" role="status">
+      {% for category, msg in messages %}
+        <div class="alert {{ 'success' if category=='success' else 'error' }}">{{ msg }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+<main>
+  <section class="card">
+    {% block content %}{% endblock %}
+  </section>
+</main>
+<footer>
+  <p>Built by N H Padma Priya</p>
+</footer>
+<script>
+  // Auto-dismiss alerts for a cleaner experience
+  setTimeout(() => { document.querySelectorAll('.alert').forEach(el => el.remove()); }, 4000);
+
+  // Button loading states on form submit
+  document.addEventListener('submit', (e) => {
+    const form = e.target;
+    const btns = form.querySelectorAll('button[type="submit"], .btn[type="submit"]');
+    btns.forEach(btn => {
+      if (!btn.dataset.originalText) btn.dataset.originalText = btn.textContent;
+      btn.disabled = true;
+      btn.setAttribute('aria-busy', 'true');
+      btn.textContent = 'Processing…';
+    });
+  }, true);
+
+  // Add icons to common actions for a richer UI
+  const iconMap = [
+    { match: /login/i, icon: '🔐 ' },
+    { match: /sign ?up/i, icon: '🆕 ' },
+    { match: /logout/i, icon: '🚪 ' },
+    { match: /post job/i, icon: '➕ ' },
+    { match: /apply/i, icon: '📝 ' },
+    { match: /view applicants/i, icon: '👥 ' },
+    { match: /view feedback/i, icon: '💬 ' },
+    { match: /start interview/i, icon: '🎤 ' },
+    { match: /leaderboard/i, icon: '📈 ' },
+    { match: /update profile|profile/i, icon: '👤 ' },
+    { match: /save profile|save/i, icon: '💾 ' },
+    { match: /back/i, icon: '↩ ' },
+  ];
+  function prefixIcon(el){
+    const txt = (el.textContent || '').trim();
+    if (!txt) return;
+    // Avoid double prefix
+    if (/^[\p{Emoji}\p{So}\p{Sk}]/u.test(txt)) return;
+    for (const {match, icon} of iconMap){
+      if (match.test(txt)) { el.textContent = icon + txt; break; }
+    }
+  }
+  document.querySelectorAll('a, button').forEach(prefixIcon);
+</script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Candidate Dashboard{% endblock %}
+{% block content %}
+<h2>Available Jobs</h2>
+{% for job in jobs %}
+<div class="card">
+    <h3>{{ job.title }}</h3>
+    <p>{{ job.description }}</p>
+    <a href="{{ url_for('apply', job_id=job.id) }}">Apply</a>
+</div>
+{% endfor %}
+
+<h2>My Applications</h2>
+{% for app in applications %}
+<div class="card">
+    Job ID: {{ app.job_id }} | Status: <span class="status">{{ app.status }}</span>
+</div>
+{% endfor %}
+<a href="{{ url_for('profile') }}">Update Profile</a>
+{% endblock %}

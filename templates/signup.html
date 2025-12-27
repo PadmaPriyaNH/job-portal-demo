@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Sign Up{% endblock %}
+{% block content %}
+<h2>Sign Up</h2>
+<form method="post">
+    <p>
+        <input type="email" name="email" placeholder="Email" required>
+    </p>
+    <p>
+        <input type="password" name="password" placeholder="Password" required>
+    </p>
+    <p>
+        <select name="role" required>
+            <option value="">Select Role</option>
+            <option value="candidate">Candidate</option>
+            <option value="recruiter">Recruiter</option>
+        </select>
+    </p>
+    <button type="submit">Sign Up</button>
+</form>
+{% endblock %}

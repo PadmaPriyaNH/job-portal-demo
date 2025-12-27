@@ -1,0 +1,25 @@
+# Environment & secrets
+.env
+
+# Python artifacts
+__pycache__/
+*.pyc
+*.pyo
+
+# Databases & instances
+*.db
+instance/
+
+# Uploads and user content
+uploads/
+
+# OS/editor files
+.DS_Store
+.vscode/
+.idea/
+
+# Local tooling
+.venv/
+__pycache__/
+*.pyc
+uploads/

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Application Details{% endblock %}
+{% block content %}
+<div class="card">
+    <h2 style="margin-bottom:10px;">Application Details</h2>
+    <p><strong>Job:</strong> {{ job.title }}</p>
+    <p><strong>Status:</strong> <span class="status" data-s="{{ application.status }}">{{ application.status }}</span></p>
+</div>
+<div class="card">
+    <h3 style="margin-bottom:10px;">Interview Reviews</h3>
+    {% if reviews %}
+    <ul>
+        {% for r in reviews %}
+            <li>[{{ r.reviewer_type|upper }}] Score: {{ r.score }} - {{ r.comment }}</li>
+        {% endfor %}
+    </ul>
+    {% else %}
+        <p>No reviews yet.</p>
+    {% endif %}
+</div>
+<a class="btn secondary" href="{{ url_for('dashboard') }}">Back to Dashboard</a>
+{% endblock %}
