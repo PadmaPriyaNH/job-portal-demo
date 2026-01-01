@@ -76,9 +76,9 @@ INTERVIEW_SECRET=dev-shared-secret
 #### 🔹 Terminal 1: Start the Interview Interface
 ```bash
 cd interview-interface/AI-Interview-Coach
-python app.py
+python wsgi.py
 ```
-✅ Expected output: `Running on http://127.0.0.1:8000`
+✅ Expected output: `Running on http://127.0.0.1:8000/`
 
 #### 🔹 Terminal 2: Start the Main Job Portal
 ```bash
