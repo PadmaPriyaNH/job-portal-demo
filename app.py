@@ -5,6 +5,7 @@ import os
 import os as _os
 
 app = Flask(__name__)
+INTERVIEW_APP_URL = "http://127.0.0.1:8000/interview"
 INTERVIEW_SECRET = _os.getenv("INTERVIEW_SECRET", "")
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///jobportal.db'
 app.config['SECRET_KEY'] = 'demo-secret-key-for-interview'
@@ -183,7 +184,8 @@ def applicants(job_id):
             'comm_score': profile.comm_score if profile else 0,
             'application_id': app.id
         })
-    return render_template('applicants.html', job=job, candidates=candidates)
+    # ✅ PASS INTERVIEW_APP_URL TO TEMPLATE (THIS IS THE ONLY CHANGE)
+    return render_template('applicants.html', job=job, candidates=candidates, INTERVIEW_APP_URL=INTERVIEW_APP_URL)
 
 # ===== Add Review =====
 @app.route('/application/<int:app_id>')
@@ -209,7 +211,7 @@ def interview_callback():
     reviewer_type = data.get('reviewer_type')
     score = data.get('score')
     comment = data.get('comment', '')
-    if not all([app_id, reviewer_type, isinstance(score, (int, float))]):
+    if not all([app_id, reviewer_type, isinstance(score, (int, float))] or [False]):
         return jsonify({"error": "Invalid payload"}), 400
     app_rec = Application.query.get(app_id)
     if not app_rec:

@@ -19,7 +19,8 @@
         <td>
             <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
                 <a class="btn secondary" href="{{ url_for('feedback_view', job_id=job.id) }}">View Feedback</a>
-                <a class="btn" href="http://localhost:5001/start?app_id={{ c.application_id }}&candidate_email={{ c.email }}&job_title={{ job.title }}" target="_blank" rel="noopener noreferrer">Start Interview</a>
+                <a class="btn" href="http://127.0.0.1:8000/interview?app_id={{ c.application_id }}&candidate_email={{ c.email|urlencode }}&job_title={{ job.title|urlencode }}" target="_blank" rel="noopener noreferrer">Start Interview</a>
+                <!--<a class="btn" href="http://localhost:5001/start?app_id={{ c.application_id }}&candidate_email={{ c.email }}&job_title={{ job.title }}" target="_blank" rel="noopener noreferrer">Start Interview</a> -->
                 <form method="post" action="{{ url_for('add_review', app_id=c.application_id) }}" style="display:flex; gap:6px; align-items:center;">
                     <input type="hidden" name="job_id" value="{{ job.id }}">
                     <label class="sr-only" for="type-{{ c.application_id }}">Reviewer</label>
