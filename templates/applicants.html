@@ -2,6 +2,9 @@
 {% block title %}Applicants for {{ job.title }}{% endblock %}
 {% block content %}
 <h2>Applicants for "{{ job.title }}"</h2>
+<div style="margin: 12px 0;">
+    <a class="btn primary" href="{{ url_for('export_candidates_csv') }}">Download All Candidates (.csv)</a>
+</div>
 <table>
     <tr>
         <th>Email</th>

@@ -2,6 +2,9 @@
 {% block title %}Recruiter Dashboard{% endblock %}
 {% block content %}
 <h2>My Jobs</h2>
+<div style="margin: 12px 0;">
+    <a class="btn primary" href="{{ url_for('export_candidates_csv') }}">Download All Candidates (.csv)</a>
+</div>
 {% for job in jobs %}
 <div class="card">
     <h3>{{ job.title }}</h3>

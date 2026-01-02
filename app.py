@@ -1,8 +1,12 @@
-from flask import Flask, request, render_template, redirect, url_for, session, jsonify, flash
+from flask import Flask, request, render_template, redirect, url_for, session, jsonify, flash, Response
 from models import db, User, CandidateProfile, Job, Application, Review
 from utils import analyze_candidate, extract_text_from_pdf
 import os
 import os as _os
+import csv
+import io
+import re
+from datetime import datetime as dt
 
 app = Flask(__name__)
 INTERVIEW_APP_URL = "http://127.0.0.1:8000/interview"
@@ -319,6 +323,144 @@ def feedback_view(job_id):
             'reviews': reviews
         })
     return render_template('feedback.html', job=job, data=data)
+
+@app.route('/export/candidates.csv')
+def export_candidates_csv():
+    if session.get('role') != 'recruiter':
+        flash("Recruiters only. Please log in as a recruiter.", "error")
+        return redirect(url_for('dashboard'))
+
+    users = User.query.filter_by(role='candidate').all()
+
+    # Build dataset
+    data = []
+    for u in users:
+        p = CandidateProfile.query.filter_by(user_id=u.id).first()
+        tech = float(p.tech_score) if p and p.tech_score is not None else 0.0
+        comm = float(p.comm_score) if p and p.comm_score is not None else 0.0
+        composite = round((tech + comm) / 2.0, 2)
+
+        resume_filename = "Not uploaded"
+        resume_text = ""
+        if p and p.resume_path and os.path.exists(p.resume_path):
+            resume_filename = os.path.basename(p.resume_path)
+            try:
+                resume_text = extract_text_from_pdf(p.resume_path) or ""
+            except Exception:
+                resume_text = ""
+
+        # Try to extract phone from resume text
+        phone = ""
+        if resume_text:
+            m = re.search(r'(\+?\d[\d \-\(\)]{7,}\d)', resume_text)
+            if m:
+                phone = m.group(1).strip()
+
+        # Leadership inference from resume
+        leadership = ""
+        if resume_text:
+            t = resume_text.lower()
+            indicators = ['team lead', 'lead developer', 'led ', 'lead ', 'managed', 'manager', 'mentored', 'supervised', 'head of']
+            leadership = "Yes" if any(ind in t for ind in indicators) else "No"
+
+        # Applications summary
+        apps = Application.query.filter_by(candidate_id=u.id).order_by(Application.created_at.desc()).all()
+        num_jobs = len({a.job_id for a in apps}) if apps else 0
+        current_status = apps[0].status if apps else "Applied"
+
+        # Latest review across all applications (by highest ID)
+        latest_review = ""
+        if apps:
+            app_ids = [a.id for a in apps]
+            r = Review.query.filter(Review.application_id.in_(app_ids)).order_by(Review.id.desc()).first()
+            if r:
+                snippet = (r.comment or "").strip().replace('\n', ' ')
+                if len(snippet) > 100:
+                    snippet = snippet[:100] + "..."
+                latest_review = f"{r.reviewer_type.upper()} {int(r.score) if r.score is not None else ''}: {snippet}"
+
+        linkedin = p.linkedin_url if p and p.linkedin_url else ""
+        github = p.github_url if p and p.github_url else ""
+        merged_skills = p.extracted_skills if p and p.extracted_skills else ""
+
+        # Placeholders for fields not stored separately
+        manual_skills = ""
+        ai_skills = ""
+        candidate_name = ""
+
+        data.append({
+            "name": candidate_name,
+            "email": u.email,
+            "phone": phone,
+            "linkedin": linkedin,
+            "github": github,
+            "resume": resume_filename,
+            "manual_skills": manual_skills,
+            "ai_skills": ai_skills,
+            "merged_skills": merged_skills,
+            "tech_score": tech,
+            "comm_score": comm,
+            "composite": composite,
+            "status": current_status,
+            "num_jobs": num_jobs,
+            "latest_review": latest_review,
+        })
+
+    # Dense ranking based on composite score (desc)
+    scores = sorted({row["composite"] for row in data}, reverse=True)
+    rank_map = {score: idx + 1 for idx, score in enumerate(scores)}
+    for row in data:
+        row["rank"] = rank_map[row["composite"]]
+
+    # Sort by composite desc for output
+    data.sort(key=lambda r: r["composite"], reverse=True)
+
+    # Generate CSV
+    output = io.StringIO(newline='')
+    writer = csv.writer(output)
+    writer.writerow([
+        "Candidate Name",
+        "Email",
+        "Phone",
+        "LinkedIn URL",
+        "GitHub URL",
+        "Uploaded Resume Filename",
+        "Manual Skills",
+        "AI-Extracted Skills",
+        "Merged & Deduplicated Skills",
+        "GitHub Technical Score",
+        "Communication Score",
+        "Total Composite Score",
+        "Overall Rank",
+        "Current Application Status",
+        "Number of Jobs Applied",
+        "Latest Interview Review"
+    ])
+
+    for row in data:
+        writer.writerow([
+            row["name"],
+            row["email"],
+            row["phone"],
+            row["linkedin"],
+            row["github"],
+            row["resume"],
+            row["manual_skills"] or "",
+            row["ai_skills"] or "",
+            row["merged_skills"] or "",
+            row["tech_score"],
+            row["comm_score"],
+            row["composite"],
+            row["rank"],
+            row["status"],
+            row["num_jobs"],
+            row["latest_review"]
+        ])
+
+    csv_data = output.getvalue()
+    response = Response(csv_data, mimetype='text/csv')
+    response.headers['Content-Disposition'] = f'attachment; filename=candidates_export_{dt.utcnow().strftime("%Y%m%d")}.csv'
+    return response
 
 if __name__ == '__main__':
     app.run(debug=True)
